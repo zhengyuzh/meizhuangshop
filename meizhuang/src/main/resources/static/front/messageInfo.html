@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="pragma" content="no-cache"/>
+    <meta http-equiv="content-type" content="no-cache, must-revalidate"/>
+    <meta http-equiv="expires" content="Wed, 26 Feb 1997 08:21:57 GMT"/>
+    <title>留言信息</title>
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/my.css">
+    <link rel="stylesheet" href="css/nav.css">
+
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+<body style="background-color: #f2dede">
+<div id="wrapper" v-cloak>
+    <!-- 头部开始 -->
+    <div style="width: 100%; height: 30px; line-height: 30px; background-color: #518657">
+        <div class="container">
+            <div class="col-md-6" style="text-align: left">
+                <a href="/end/page/login.html" target="_blank" style="color: white; margin-right: 20px" >登录</a>
+                <a href="/end/page/register.html" target="_blank" style="color: white">注册</a>
+            </div>
+            <div class="col-md-6" style="color: yellow; text-align: right">
+                <span v-if="user.name">
+                    欢迎您，{{user.name}}
+                    <a style="color: white" href="javascript:void(0)" @click="logout">退出</a>
+                    <a v-if="isCollect" style="margin-left: 10px" href="collectInfo.html">收藏夹</a>
+                </span>
+            </div>
+        </div>
+        <hr>
+    </div>
+    <div class="container">
+        <div style="width: 100%; height: 80px;border-bottom: 1px solid #ccc">
+            <div class="col-md-3" style="height: 80px; display: flex; justify-content: left;align-items: center;
+                     font-size: 30px;">
+                <a style="color: red;" href="/front/index.html">MakeUp美妆网</a>
+            </div>
+            <div class="col-md-9">
+                <div class="row" style="height: 80px; line-height: 80px">
+                    <ul style="display: flex;">
+                        <li class="nav-item"><a href="index.html">首页</a></li>
+                        <li class="nav-item"><a href="advertiserInfo.html">公告信息</a></li>
+                        <li class="nav-item"><a href="messageInfo.html" class="nav-item-active">在线交流</a></li>
+                        <li class="nav-item"><a href="cartInfo.html">购物车信息</a></li>
+                        <li class="nav-item"><a href="orderInfo.html">订单信息</a></li>
+                        <li class="nav-item"><a href="commentInfo.html">评价信息</a></li>
+
+                        <li class="nav-item"><a href="javascript:void(0)" @click="personalPage">个人信息</a></li>
+                        <li class="nav-item" v-if="isShow"><a href="/end/page/index.html" target="_blank">进入后台系统</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 头部结束 -->
+    <div class="container"  style="margin-top: 20px">
+        <div class="row">
+            <div style="margin-bottom: 10px" class="col-md-12">
+                <h4>你想对我说什么</h4>
+            </div>
+            <div class="col-md-12">
+                <textarea id="message-text" style="resize:none; width: 100%"></textarea>
+            </div>
+            <div class="col-md-12" style="text-align: right;">
+                <button class="btn btn-primary" @click="submitMessage">发送</button>
+                <hr>
+            </div>
+        </div>
+        <div class="row">
+            <div style="background-color: white; min-height: 300px">
+                <div style="width: 100%; height: 50px; background-color: #f8eeee; line-height: 50px; margin: 30px 0">
+                    <span style="font-weight: bold; margin-left: 20px; font-size: 16px">看看大家都在聊什么（{{totalMessage}}）</span>
+                </div>
+                <div id="comment-content">
+                    <div v-for="item in messages" class="row">
+                        <div class="col-md-1" style="text-align: right">{{item.name}}</div>
+                        <div class="col-md-10">
+                            <div class="row" style="padding: 0 40px">
+                                <div class="col-md-9" style="text-align: justify;">{{item.content}}</div>
+                                <div class="col-md-3">{{item.time}}</div>
+                                <div style="color: #888" v-for="child in item.children">
+                                    <div class="col-md-12" style="margin-top: 10px; ">{{child.name}}回复：</div>
+                                    <div class="col-md-9">{{child.content}}</div>
+                                    <div class="col-md-3">{{child.time}}</div>
+                                </div>
+
+                                <div class="col-md-6" style="margin-top: 10px">
+                                    <input type="text" class="form-control" style="width: 80%; display: inline-block" v-model="item.replayText">
+                                    <button class="btn btn-sm" @click="reply(item.id, item.replayText)">回复</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12"><hr  style="margin: 10px 0"/></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="js/jquery-1.10.2.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/vue2.6.11/axios.js"></script>
+<script src="js/vue2.6.11/vue.min.js"></script>
+<script src="js/my.js"></script>
+
+<script>
+    Date.prototype.Format = function (fmt) { // author: meizz
+        let o = {
+            "M+": this.getMonth() + 1, // 月份
+            "d+": this.getDate(), // 日
+            "h+": this.getHours(), // 小时
+            "m+": this.getMinutes(), // 分
+            "s+": this.getSeconds(), // 秒
+            "q+": Math.floor((this.getMonth() + 3) / 3), // 季度
+            "S": this.getMilliseconds() // 毫秒
+        };
+        if (/(y+)/.test(fmt))
+            fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+        for (var k in o)
+            if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+        return fmt;
+    };
+
+    new Vue({
+        el: '#wrapper',
+        data: {
+            messages: [],
+            totalMessage: 0,
+            isShow: false,
+            user: {},
+            isCollect: false
+        },
+
+        created: function() {
+            axios.get('/auth').then(res => {
+                if (res.data.code === '0') {
+                    this.user = res.data.data;
+                    this.isShow = true;
+                }
+            });
+            this.loadMessages(1);
+        },
+
+        methods: {
+            loadMessages() {
+                axios.get('/messageInfo').then(res => {
+                    if (res.data.code === '0') {
+                        this.messages = res.data.data;
+                        this.totalMessage = this.messages.length;
+                    } else {
+                        alert(res.data.msg)
+                    }
+                })
+            },
+            submitMessage() {
+                let user = this.user;
+                if (!user || !user.name) {
+                    alert('请先登录');
+                    this.loadMessages();
+                    return;
+                }
+                let data = {};
+                let content = data.content = $('#message-text').val();
+                if (!content) {
+                    alert('请输入内容');
+                    return;
+                }
+                data.content = content;
+                data.name = user.name;
+                data.time = new Date().Format('yyyy-MM-dd hh:mm:ss');
+                axios.post('/messageInfo', data).then(res => {
+                    $('#message-text').val('');
+                    alert('留言成功');
+                    this.loadMessages();
+                })
+            },
+            reply(id, content) {
+                let user = this.user;
+                if (!user || !user.name) {
+                    alert('请先登录');
+                    this.loadMessages();
+                    return;
+                }
+                if (!content) {
+                    alert('请输入内容');
+                    return;
+                }
+                let data = {content: content, name: user.name, time: new Date().Format('yyyy-MM-dd hh:mm:ss'), parentId: id};
+                axios.post('/messageInfo', data).then(res => {
+                    $('#message-text').val('');
+                    alert('回复成功');
+                    this.loadMessages();
+                })
+            },
+            logout() {
+                axios.get("/logout").then(res => {
+                    if(res.data.code === '0') {
+                        location.href = '/front/index.html';
+                    } else {
+                        msg('error', res.data.msg);
+                    }
+                })
+            }
+        }
+    })
+</script>
+</body>
+</html>

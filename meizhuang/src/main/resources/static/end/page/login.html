@@ -1,0 +1,138 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>登陆页面</title>
+
+    <link href="../css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="../css/font-awesome.css" rel="stylesheet"/>
+
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+<body style="background:url('../img/bg.jpg') no-repeat; background-size: cover;">
+<div id="app" class="container" v-cloak>
+    <div class="row text-center " style="padding-top:100px;">
+        <div class="col-md-12">
+           <h2>欢迎登录美妆化妆品管理系统</h2>
+        </div>
+    </div>
+    <div class="row ">
+
+        <div class="col-md-4 col-md-offset-4 col-sm-6 col-sm-offset-3 col-xs-10 col-xs-offset-1">
+
+            <div class="panel-body">
+                <form role="form">
+                    <hr/>
+                    <br/>
+                    <div class="form-group input-group">
+                        <span class="input-group-addon"><i class="fa fa-tag"></i></span>
+                        <input type="text" class="form-control" v-model="user.name" placeholder="用户名"/>
+                    </div>
+                    <div class="form-group input-group">
+                        <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                        <input type="password" class="form-control" v-model="user.password" placeholder=" 密码"/>
+                    </div>
+                    <h5>请选择角色</h5>
+                    <div class="form-group input-group">
+                        <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                        <select v-model="user.level" class="form-control" style="height:35px;">
+                            <option v-for="item in authorities" :value="item.level" name="level">{{item.name}}</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-inline">
+
+                        </label>
+                        <span class="pull-right">
+                               <a href="javascript:void(0)" @click="reset">忘记密码?</a>
+                        </span>
+                    </div>
+
+                    <div style="text-align: center">
+                        <a href="javascript:void(0)" @click="login" class="btn btn-primary">登陆</a>
+                    </div>
+                    <hr/>
+                    <div style="text-align: center">
+                        没有账号 ? <a href="register.html" target="_blank">点我注册 </a>
+                    </div>
+
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script src="../js/vue2.6.11/vue.min.js"></script>
+<script src="../js/vue2.6.11/axios.js"></script>
+
+<script>
+    new Vue({
+        el: "#app",
+        data: {
+            user: {
+                name: "",
+                password: "",
+                level: null
+            },
+            authorities: [],
+        },
+        created: function () {
+            axios.get("/getAuthority").then(res => {
+                if (res.data.code === '0') {
+                    this.authorities = res.data.data;
+                } else {
+                    alert(res.data.msg);
+                }
+            });
+        },
+        methods: {
+            login() {
+                if (!this.user.name) {
+                    alert("请输入用户名");
+                    return;
+                }
+                if (!this.user.password) {
+                    alert("请输入密码");
+                    return;
+                }
+                if (!this.user.level) {
+                    alert("请选择角色");
+                    return;
+                }
+                axios.post('/login', this.user).then(res => {
+                    if(res.data.code === '0') {
+                        localStorage.setItem('user', JSON.stringify(res.data.data));
+                        window.location = '/front/index.html';
+                    } else {
+                        alert(res.data.msg);
+                    }
+                });
+            },
+            reset() {
+                if (!this.user.name) {
+                    alert("请输入用户名");
+                    return;
+                }
+                if (!this.user.level) {
+                    alert("请选择角色");
+                    return;
+                }
+                axios.post('/resetPassword', this.user).then(res => {
+                    if(res.data.code === '0') {
+                        alert("重置密码成功，密码重置为：123456")
+                    } else {
+                        alert(res.data.msg);
+                    }
+                });
+            }
+        }
+    });
+</script>
+</body>
+</html>

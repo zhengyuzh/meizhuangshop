@@ -1,0 +1,262 @@
+﻿
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="pragma" content="no-cache" />
+    <meta http-equiv="content-type" content="no-cache, must-revalidate" />
+    <meta http-equiv="expires" content="Wed, 26 Feb 1997 08:21:57 GMT"/>
+    <title>home</title>
+
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/nav.css">
+    <link rel="stylesheet" href="../css/font-awesome.css">
+    <link rel="stylesheet" href="../css/element/index.css">
+
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+<div id="wrapper" v-cloak>
+    <!--导航栏-->
+    <div class="menuW" style="float: left">
+        <div class="sideMenu">
+            <div class="head">MakeUp美妆网</div>
+            <ul>
+                <li class="nLi on">
+                    <h3><i class="fa fa-dashboard"></i>首页<span class="fa fa-angle-up arrow"></span></h3>
+                    <ul class="sub">
+                        <li><a href="index.html" class="active"><i class="fa fa-dashboard"></i>首页</a></li>
+                    </ul>
+                </li>
+                <li class="nLi on">
+                    <h3><i class="fa fa fa-dashboard icon"></i>信息展示<span class="fa fa-angle-up arrow"></span>
+                    </h3>
+                    <ul class="sub">
+						<li v-if="authority.indexOf(1) != -1">
+							<a href="adminInfo.html"><i class="fa fa-table"></i>管理员信息</a>
+						</li>
+
+						<li v-if="authority.indexOf(3) != -1">
+							<a href="userInfo.html"><i class="fa fa-table"></i>用户信息</a>
+						</li>
+						<li v-if="authority.indexOf(5) != -1">
+							<a href="messageInfo.html"><i class="fa fa-table"></i>在线交流</a>
+						</li>
+						<li v-if="authority.indexOf(1000001) != -1">
+							<a href="advertiserInfo.html"><i class="fa fa-table"></i>公告信息</a>
+						</li>
+						<li v-if="authority.indexOf(1000009) != -1">
+							<a href="typeInfo.html"><i class="fa fa-table"></i>化妆品类别</a>
+						</li>
+						<li v-if="authority.indexOf(1000010) != -1">
+							<a href="goodsInfo.html"><i class="fa fa-table"></i>化妆品详情</a>
+						</li>
+						<li v-if="authority.indexOf(1000012) != -1">
+							<a href="orderInfo.html"><i class="fa fa-table"></i>订单信息</a>
+						</li>
+						<li v-if="authority.indexOf(1000013) != -1">
+							<a href="commentInfo.html"><i class="fa fa-table"></i>评价信息</a>
+						</li>
+
+                        <li>
+                            <a href="javascript:void(0)" @click="personalPage"><i class="fa fa-user"></i>个人信息</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nLi">
+                    <h3><i class="fa fa-unlock-alt"></i>修改密码<span class="fa fa-angle-up arrow"></span></h3>
+                    <ul class="sub">
+                        <li>
+                            <a href="updatePassword.html"><i class="fa fa-unlock-alt"></i>修改密码</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nLi">
+                    <h3><i class="fa fa-power-off"></i>退出登录<span class="fa fa-angle-up arrow"></span></h3>
+                    <ul class="sub">
+                        <li>
+                            <a href="javascript:void(0)" @click="logout"><i class="fa fa-power-off"></i>退出登录</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!-- 主体 -->
+    <div class="main">
+        <!-- 头部开始 -->
+        <div class="main-head" style="width: 100%; display: flex">
+            <div style="flex: 1; text-align: right">
+                <a href="/front/index.html"> <i class="fa fa-backward" style="margin-right: 5px"></i>返回前台首页</a>
+                <a href="javascript:void(0)" @click="personalPage">当前登录：<span style="color: yellow">{{user.name}}</span></a>
+                <a href="javascript:void(0)" @click="logout">退出登录</a>
+            </div>
+        </div>
+        <!-- 头部结束 -->
+
+        <!-- 主体开始 -->
+        <div id="main"  style="padding: 0 20px">
+            <div>
+                <!-- 色块 -->
+                <div style="border: 1px solid #ccc; margin-top: 10px">
+                    <div style="padding: 10px;border-bottom: 1px solid #ccc; color: #00ba8b; font-size: 20px; background-image: linear-gradient(to bottom, #f9f6f1,#eee);">
+                        <b>数据概览</b>
+                    </div>
+                    <div style="padding: 10px; background: #FFFFFF; display: flex; flex-wrap: wrap; justify-content: space-start;">
+                        <div style="width: 10%; margin-right: 10px; margin-bottom: 10px;">
+                            <div style="font-size: 16px; text-align: center; color: #f9f6f1; ">
+                                <div style="width: 100%; padding: 10px 0; background-color: #00ba8b; border-radius: 5px">
+                                    用户总数<br>{{totalUser}}
+                                </div>
+                            </div>
+                        </div>
+                        <div style="width: 10%; margin-right: 10px; margin-bottom: 10px;">
+                            <div style="font-size: 16px; text-align: center; color: #f9f6f1; ">
+                                <div style="width: 100%; padding: 10px 0; background-color: #00ba8b; border-radius: 5px">
+                                    总销售额<br>{{totalPrice}}
+                                </div>
+                            </div>
+                        </div>
+                        <div style="width: 10%; margin-right: 10px; margin-bottom: 10px;">
+                            <div style="font-size: 16px; text-align: center; color: #f9f6f1; ">
+                                <div style="width: 100%; padding: 10px 0; background-color: #00ba8b; border-radius: 5px">
+                                    总销量<br>{{totalShopping}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- echarts -->
+            <div class="row">
+                <div class="col-md-12" style="margin-top: 20px">
+                    <div class="panel panel-default">
+                        <div class="panel-heading" style="color: goldenrod">
+                            <select @change="selectEchartsType" v-model="echartsType">
+                                <option value="bar" style="color: gray">柱状图</option>
+                                <option value="pie" style="color: gray">饼图</option>
+                            </select>
+                        </div>
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div id="left" style="width: 100%;height:400px;"></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div id="right" style="width: 100%;height:400px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!-- 主体结束 -->
+    </div>
+</div>
+
+<script src="../js/jquery-1.10.2.js"></script>
+<script src="../js/bootstrap.min.js"></script>
+<script src="../js/nav.js"></script>
+<script src="../js/my.js"></script>
+<script src="../js/vue2.6.11/vue.min.js"></script>
+<script src="../js/vue2.6.11/axios.js"></script>
+<script src="../js/echarts.min.js"></script>
+<script src="../js/element/index.js"></script>
+
+<script>
+
+    new Vue({
+        el: "#wrapper",
+        data: {
+            user: {},
+            authority: [],
+            totalUser: 0,
+            totalComment: 0,
+            totalPrice: 0,
+            totalShopping: 0,
+            echartsShowLeftArr: [],
+            echartsShowRightArr: [],
+            echartsType: 'pie'
+        },
+        created: function () {
+            this.user = JSON.parse(localStorage.getItem("user"));
+
+            axios.get("/authority").then(res => {
+                if (res.data.code === '0') {
+                    this.authority = res.data.data;
+                } else {
+                    msg('error', res.data.msg);
+                }
+            });
+
+            axios.get("/echarts/getTotal").then(res => {
+                if (res.data.code === '0') {
+                    let map = res.data.data;
+                    this.totalUser = map['totalUser'];
+                    this.totalComment = map['totalComment'];
+                    this.totalPrice = map['totalPrice'];
+                    this.totalShopping = map['totalShopping'];
+                }
+            });
+
+            this.drawLine();
+        },
+        methods: {
+            drawLine() {
+                axios.get('/echarts/get/price').then(res => {
+                    // 基于准备好的dom，初始化echarts实例
+                    this.echartsShowLeftArr = res.data.data;
+                    if (this.echartsShowLeftArr.length) {
+                        let myChart = echarts.init(document.getElementById('left'));
+                        let option = this.getEchartsType(this.echartsShowLeftArr, this.echartsType);
+                        myChart.setOption(option, true);
+                    }
+                });
+                axios.get('/echarts/get/shopping').then(res => {
+                    // 基于准备好的dom，初始化echarts实例
+                    this.echartsShowRightArr = res.data.data;
+                    if (this.echartsShowRightArr.length) {
+                        let myChart = echarts.init(document.getElementById('right'));
+                        let option = this.getEchartsType(this.echartsShowRightArr, this.echartsType);
+                        myChart.setOption(option, true);
+                    }
+                });
+            },
+            selectEchartsType() {
+                let leftChart = echarts.init(document.getElementById('left'));
+                let leftOption = this.getEchartsType(this.echartsShowLeftArr, this.echartsType);
+                leftChart.setOption(leftOption, true);
+
+                let rightChart = echarts.init(document.getElementById('right'));
+                let rightOption = this.getEchartsType(this.echartsShowRightArr, this.echartsType);
+                rightChart.setOption(rightOption, true);
+            },
+            getEchartsType(echartsArr, type) {
+                for (let item of echartsArr) {
+                    if (item.series[0].type === type) {
+                        return item;
+                    }
+                }
+            },
+            logout() {
+                logout();
+            }
+        }
+    });
+
+
+</script>
+
+</body>
+</html>

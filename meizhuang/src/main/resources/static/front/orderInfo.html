@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="pragma" content="no-cache"/>
+    <meta http-equiv="content-type" content="no-cache, must-revalidate"/>
+    <meta http-equiv="expires" content="Wed, 26 Feb 1997 08:21:57 GMT"/>
+    <title>购物车信息</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/my.css" rel="stylesheet">
+    <link href="css/nav.css" rel="stylesheet">
+
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+        td{
+            vertical-align: middle !important;
+        }
+    </style>
+</head>
+<body style="background-color: #f2dede">
+<div id="wrapper" v-cloak>
+    <!-- 头部开始 -->
+    <div style="width: 100%; height: 30px; line-height: 30px; background-color: #518657">
+        <div class="container">
+            <div class="col-md-6" style="text-align: left">
+                <a href="/end/page/login.html" target="_blank" style="color: white; margin-right: 20px" >登录</a>
+                <a href="/end/page/register.html" target="_blank" style="color: white">注册</a>
+            </div>
+            <div class="col-md-6" style="color: yellow; text-align: right">
+                <span v-if="user.name">
+                    欢迎您，{{user.name}}
+                    <a style="color: white" href="javascript:void(0)" @click="logout">退出</a>
+                    <a v-if="isCollect" style="margin-left: 10px" href="collectInfo.html">收藏夹</a>
+                </span>
+            </div>
+        </div>
+        <hr>
+    </div>
+    <div class="container">
+        <div style="width: 100%; height: 80px;border-bottom: 1px solid #ccc">
+            <div class="col-md-3" style="height: 80px; display: flex; justify-content: left;align-items: center;
+                     font-size: 30px;">
+                <a style="color: red;" href="/front/index.html">MakeUp美妆网</a>
+            </div>
+            <div class="col-md-9">
+                <div class="row" style="height: 80px; line-height: 80px">
+                    <ul style="display: flex;">
+                        <li class="nav-item"><a href="index.html">首页</a></li>
+                        <li class="nav-item"><a href="advertiserInfo.html">公告信息</a></li>
+                        <li class="nav-item"><a href="messageInfo.html">在线交流</a></li>
+                        <li class="nav-item"><a href="cartInfo.html">购物车信息</a></li>
+                        <li class="nav-item"><a href="orderInfo.html" class="nav-item-active">订单信息</a></li>
+                        <li class="nav-item"><a href="commentInfo.html">评价信息</a></li>
+
+                        <li class="nav-item"><a href="javascript:void(0)" @click="personalPage">个人信息</a></li>
+                        <li class="nav-item" v-if="isShow"><a href="/end/page/index.html" target="_blank">进入后台系统</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 头部结束 -->
+    <div class="container"  style="margin-top: 20px">
+        <div class="col-md-12">
+            <table class="table table-bordered table-hover">
+                <thead>
+                <tr style="background-color: #f8eeee">
+                    <th>商品</th>
+                    <th>订单编号</th>
+                    <th>金额</th>
+                    <th>送货地址</th>
+                    <th>收货人</th>
+                    <th>联系方式</th>
+                    <th>时间</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="(item,index) in orderData" :key="item.id">
+                    <td style="width:230px;">
+                        <div v-for="g in item.goodsList" style="margin-bottom: 5px; display: flex;align-items: center">
+                            <img style="width: 50%; height: 50%" :src=g.imgSrc>
+                            <span style="font-size: 12px; margin-left: 10px">{{g.name}} X {{g.count}}</span>
+                        </div>
+                    </td>
+                    <td>{{item.orderId}}</td>
+                    <td>{{item.totalPrice}}</td>
+                    <td>{{item.linkAddress}}</td>
+                    <td>{{item.linkMan}}</td>
+                    <td>{{item.linkPhone}}</td>
+                    <td>{{item.createTime}}</td>
+                    <td>{{item.status}}</td>
+                    <td>
+                        <button v-if="item.status === '待付款' || item.status === '完成' || item.status === '已退款' || item.status === '已退货'" class="btn btn-danger btn-xs" @click="del(item)">删除</button>
+                        <button v-if="item.status === '待付款'" class="btn btn-warning btn-xs" @click="changeStatus(item.id, '已取消')">取消</button>
+                        <button v-if="item.status === '待付款'" class="btn btn-primary btn-xs" @click="changeStatus(item.id, '待发货')">付款</button>
+                        <button v-if="item.status === '待收货'" class="btn btn-primary btn-xs" @click="changeStatus(item.id, '完成')">确认收货</button>
+                        <button v-if="item.status === '待发货'" class="btn btn-primary btn-xs" @click="changeStatus(item.id, '申请退款中')">退款</button>
+                        <button v-if="item.status === '完成'" class="btn btn-primary btn-xs" @click="changeStatus(item.id, '申请退货中')">退货</button>
+                        <button v-if="item.status === '完成'" class="btn btn-primary btn-xs" @click="huishou(item)">回收</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div style="text-align: center;">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination">
+                        <li class="page-item" :class="{ disabled: preActive }">
+                            <a class="page-link" href="javascript:void(0)"
+                               @click="loadOrderInfo(pageInfo.pageNum - 1)">上一页</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="javascript:void(0)" v-if="pageInfo.pageNum > 1" @click="loadOrderInfo(pageInfo.pageNum - 1)">{{pageInfo.pageNum - 1}}</a>
+                        </li>
+                        <li class="page-item disabled">
+                            <a class="page-link" aria-disabled="true" href="javascript:void(0)">{{pageInfo.pageNum}}</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="javascript:void(0)" v-if="pageInfo.hasNextPage" @click="loadOrderInfo(pageInfo.pageNum + 1)">{{pageInfo.pageNum + 1}}</a>
+                        </li>
+                        <li class="page-item" :class="{ disabled: nextActive }">
+                            <a class="page-link" href="javascript:void(0)" @click="loadOrderInfo(pageInfo.hasNextPage? (pageInfo.pageNum + 1) : pageInfo.pageNum)">下一页</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="js/jquery-1.10.2.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/jquery.metisMenu.js"></script>
+<script src="js/vue2.6.11/vue.min.js"></script>
+<script src="js/vue2.6.11/axios.js"></script>
+<script src="js/my.js"></script>
+
+<script>
+    new Vue({
+        el: '#wrapper',
+        data: {
+            isCollect: false,
+            orderData: [],
+            pageInfo: {},
+            preActive: true,
+            nextActive: true,
+
+            totalCount: 0,
+            user: {},
+            totalMoney: 0,
+            isShow: false
+        },
+
+        created: function() {
+            this.loadOrderInfo(1);
+        },
+
+        methods: {
+            loadOrderInfo(pageNum) {
+                axios.get('/auth').then(res => {
+                    if (res.data.code === '0') {
+                        this.user = res.data.data;
+                        if (this.user.level !== 3) {
+                            this.isShow = true;
+                        }
+                        axios.get("/orderInfo/page/front?userId=" + this.user.id + '&level=' + this.user.level + '&pageNum=' + pageNum).then(res => {
+                            if (res.data.code === '0') {
+                                console.error(res.data)
+                                let orderData = res.data.data.list;
+                                orderData.forEach(item => {
+                                    let goodsList = item.goodsList;
+                                    goodsList.forEach(g => {
+                                        // 获取展示图
+                                        g.imgSrc = '/front/img/goods/default.png';
+                                        if (g.fileIds) {
+                                            let fileIds = JSON.parse(g.fileIds);
+                                            if (fileIds.length) {
+                                                g.imgSrc = '/files/download/' + fileIds[0];
+                                            }
+                                        }
+                                    });
+                                    item.goodsList = goodsList;
+                                });
+                                this.orderData = orderData;
+                                this.pageInfo = res.data.data;
+                                this.preActive = !(this.pageInfo.hasPreviousPage);
+                                this.nextActive = !(this.pageInfo.hasNextPage);
+                            } else {
+                                alert(res.data.msg);
+                            }
+                        });
+                    } else {
+                        alert('请先登录');
+                        location.href = '/end/page/login.html';
+                    }
+                })
+            },
+            del(data) {
+                if (confirm('确定删除订单吗？')) {
+                    axios.delete('/orderInfo/' + data.id).then(res => {
+                        if (res.data.code === '0') {
+                            alert('删除成功');
+                            this.loadOrderInfo(1);
+                        }
+                    })
+                }
+
+            },
+            changeStatus(id, status) {
+                axios.post('/orderInfo/status/' + id + '/' + status).then(res => {
+                    if (res.data.code === '0') {
+                        this.loadOrderInfo(1);
+                    } else {
+                        alert(res.data.msg);
+                    }
+                })
+            },
+            huishou(obj) {
+                axios.post("/orderInfo/huishou", obj).then(res => {
+                    if (res.data.code === '0') {
+                        alert('回收信息提交成功')
+                    } else {
+                        alert(res.data.msg)
+                    }
+                })
+            },
+            logout() {
+                axios.get("/logout").then(res => {
+                    if(res.data.code === '0') {
+                        location.href = '/front/index.html';
+                    } else {
+                        msg('error', res.data.msg);
+                    }
+                })
+            }
+        }
+    })
+</script>
+</body>
+</html>

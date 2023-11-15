@@ -1,0 +1,31 @@
+server:
+  port: 8888
+  connection-timeout: 60000
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: root
+    url: jdbc:mysql://localhost:3306/meizhuang?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&useSSL=false&serverTimezone=GMT%2b8
+  thymeleaf:
+    cache: false #关闭缓存
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.example.entity
+
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+  params: count=countSql
+
+authority:
+  info: '[{"models":[{"modelId":1,"operation":[1,2,3,4]},{"modelId":1000001,"operation":[1,2,3,4]},{"modelId":2,"operation":[1,2,3,4]},{"modelId":3,"operation":[1,2,3,4]},{"modelId":1000009,"operation":[1,2,3,4]},{"modelId":1000010,"operation":[1,2,3,4]},{"modelId":1000011,"operation":[1,2,3,4]},{"modelId":1000012,"operation":[1,2,3,4]},{"modelId":1000013,"operation":[1,2,3,4]},{"modelId":5,"operation":[1,2,3,4]}],"level":1,"modelId":1,"name":"管理员"},{"models":[{"modelId":1000001,"operation":[4]},{"modelId":1000009,"operation":[4]},{"modelId":1000010,"operation":[4]},{"modelId":1000011,"operation":[4]},{"modelId":1000012,"operation":[4]},{"modelId":1000013,"operation":[4]},{"modelId":5,"operation":[4]}],"level":3,"modelId":3,"name":"用户"}]'
+
+logging:
+  file: log/my.log

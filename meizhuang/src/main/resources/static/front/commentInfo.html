@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="pragma" content="no-cache"/>
+    <meta http-equiv="content-type" content="no-cache, must-revalidate"/>
+    <meta http-equiv="expires" content="Wed, 26 Feb 1997 08:21:57 GMT"/>
+    <title>商品评价</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/my.css" rel="stylesheet">
+    <link href="css/nav.css" rel="stylesheet">
+
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+        td{
+            vertical-align: middle !important;
+        }
+    </style>
+</head>
+<body style="background-color: #f2dede">
+<div id="wrapper" v-cloak>
+    <!-- 头部开始 -->
+    <div style="width: 100%; height: 30px; line-height: 30px; background-color: #518657">
+        <div class="container">
+            <div class="col-md-6" style="text-align: left">
+                <a href="/end/page/login.html" target="_blank" style="color: white; margin-right: 20px" >登录</a>
+                <a href="/end/page/register.html" target="_blank" style="color: white">注册</a>
+            </div>
+            <div class="col-md-6" style="color: yellow; text-align: right">
+                <span v-if="user.name">
+                    欢迎您，{{user.name}}
+                    <a style="color: white" href="javascript:void(0)" @click="logout">退出</a>
+                    <a v-if="isCollect" style="margin-left: 10px" href="collectInfo.html">收藏夹</a>
+                </span>
+            </div>
+        </div>
+        <hr>
+    </div>
+    <div class="container">
+        <div style="width: 100%; height: 80px;border-bottom: 1px solid #ccc">
+            <div class="col-md-3" style="height: 80px; display: flex; justify-content: left;align-items: center;
+                     font-size: 30px;">
+                <a style="color: red;" href="/front/index.html">MakeUp美妆网</a>
+            </div>
+            <div class="col-md-9">
+                <div class="row" style="height: 80px; line-height: 80px">
+                    <ul style="display: flex;">
+                        <li class="nav-item"><a href="index.html">首页</a></li>
+                        <li class="nav-item"><a href="advertiserInfo.html">公告信息</a></li>
+                        <li class="nav-item"><a href="messageInfo.html">在线交流</a></li>
+                        <li class="nav-item"><a href="cartInfo.html">购物车信息</a></li>
+                        <li class="nav-item"><a href="orderInfo.html">订单信息</a></li>
+                        <li class="nav-item"><a href="commentInfo.html" class="nav-item-active">评价信息</a></li>
+
+                        <li class="nav-item"><a href="javascript:void(0)" @click="personalPage">个人信息</a></li>
+                        <li class="nav-item" v-if="isShow"><a href="/end/page/index.html" target="_blank">进入后台系统</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 头部结束 -->
+    <div class="container"  style="margin-top: 20px">
+        <div class="col-md-12">
+            <table class="table table-bordered table-hover">
+                <thead>
+                <tr style="background-color: #f8eeee">
+                    <th>商品</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="(item,index) in goodsList" :key="item.id">
+                    <td style="width:230px;">
+                        <a style="margin-bottom: 5px; display: flex;align-items: center" :href="'/front/goodsInfo.html?goodsId=' + item.id" target="_blank">
+                            <img style="width: 50%; height: 50%" :src=item.imgSrc>
+                            <span style="font-size: 12px; margin-left: 10px">{{item.name}}</span>
+                        </a>
+                    </td>
+                    <td>{{item.commentStatus}}</td>
+                    <td>
+                        <button class="btn btn-primary btn-xs" @click="openModel(item)">评价</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="modal" tabindex="-1" role="dialog" id="commentModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="modal-title">请填写信息</span>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-horizontal">
+                        <input type="hidden" name="id" v-model="commentInfo.goodsId">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">评价内容</label>
+                            <div class="col-sm-7">
+                                <textarea type="text" class="form-control" v-model="commentInfo.content" placeholder="请输入评价内容"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" @click="submitComment()">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="js/jquery-1.10.2.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/jquery.metisMenu.js"></script>
+<script src="js/vue2.6.11/vue.min.js"></script>
+<script src="js/vue2.6.11/axios.js"></script>
+<script src="js/my.js"></script>
+
+<script>
+    new Vue({
+        el: '#wrapper',
+        data: {
+            isCollect: false,
+            goodsList: [],
+            commentInfo: {
+                goodsId: 0,
+                content: ''
+            },
+            user: {},
+            isShow: false
+        },
+
+        created: function() {
+            this.loadGoodsInfo();
+        },
+
+        methods: {
+            loadGoodsInfo() {
+                axios.get('/auth').then(res => {
+                    if (res.data.code === '0') {
+                        this.user = res.data.data;
+                        if (this.user.level !== 3) {
+                            this.isShow = true;
+                        }
+                        axios.get("/goodsInfo/comment/" + this.user.id + "/" + this.user.level).then(res => {
+                            if (res.data.code === '0') {
+                                let goodsList = res.data.data;
+                                goodsList.forEach(item => {
+                                    // 获取展示图
+                                    item.imgSrc = '/front/img/goods/default.png';
+                                    if (item.fileIds) {
+                                        let fileIds = JSON.parse(item.fileIds);
+                                        if (fileIds.length) {
+                                            item.imgSrc = '/files/download/' + fileIds[0];
+                                        }
+                                    }
+                                });
+                                this.goodsList = goodsList;
+                            } else {
+                                alert(res.data.msg);
+                            }
+                        });
+                    } else {
+                        alert('请先登录');
+                        location.href = '/end/page/login.html';
+                    }
+                })
+            },
+            openModel(data) {
+                this.commentInfo.goodsId = data.id;
+                this.commentInfo.content = '';
+                $('#commentModal').modal('show');
+            },
+            submitComment() {
+                let data = {userId: this.user.id, level: this.user.level, content: this.commentInfo.content, goodsId: this.commentInfo.goodsId};
+                axios.post('/commentInfo', data).then(res => {
+                    if (res.data.code === '0') {
+                        $('#commentModal').modal('hide');
+                        alert('评价成功');
+                        this.loadGoodsInfo();
+                    } else {
+                        alert(res.data.msg);
+                    }
+                })
+            },
+            logout() {
+                axios.get("/logout").then(res => {
+                    if(res.data.code === '0') {
+                        location.href = '/front/index.html';
+                    } else {
+                        msg('error', res.data.msg);
+                    }
+                })
+            }
+        }
+    })
+</script>
+</body>
+</html>

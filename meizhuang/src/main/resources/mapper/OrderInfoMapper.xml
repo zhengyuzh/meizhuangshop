@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.dao.OrderInfoDao">
+    <delete id="deleteById">
+        delete from order_info where id = #{orderId}
+    </delete>
+
+    <select id="findByUserId" resultType="com.example.entity.OrderInfo">
+        select order_info.* from order_info where userId = #{userId} and level = #{level} order by id desc
+    </select>
+
+    <select id="findByEndUserId" resultType="com.example.entity.OrderInfo">
+        SELECT c.* FROM
+        (
+        SELECT a.*, b.goodsId AS goodsId FROM order_info AS a JOIN order_goods_rel AS b ON a.id = b.orderId
+        where 1=1
+        <if test="status != null and status != ''">
+            and a.status = #{status}
+        </if>
+        ) AS c
+        LEFT JOIN goods_info AS d ON c.goodsId = d.id
+        WHERE d.userId = #{userId} and d.level = #{level}
+        GROUP BY c.id
+    </select>
+
+    <select id="findById" resultType="com.example.entity.OrderInfo">
+        select * from order_info where id = #{orderId}
+    </select>
+</mapper>

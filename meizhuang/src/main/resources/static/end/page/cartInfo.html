@@ -1,0 +1,259 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v-on="http://www.w3.org/1999/xhtml"
+      xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="pragma" content="no-cache" />
+    <meta http-equiv="content-type" content="no-cache, must-revalidate" />
+    <meta http-equiv="expires" content="Wed, 26 Feb 1997 08:21:57 GMT"/>
+    <title>购物车信息</title>
+
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/nav.css">
+    <link rel="stylesheet" href="../css/font-awesome.css">
+    <link rel="stylesheet" href="../css/element/index.css">
+
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div id="wrapper" v-cloak>
+    <!--导航栏-->
+    <div class="menuW" style="float: left">
+        <div class="sideMenu">
+            <div class="head">MakeUp美妆网</div>
+            <ul>
+                <li class="nLi">
+                    <h3><i class="fa fa-dashboard"></i>首页<span class="fa fa-angle-up arrow"></span></h3>
+                    <ul class="sub">
+                        <li><a href="index.html"><i class="fa fa-dashboard"></i>首页</a></li>
+                    </ul>
+                </li>
+                <li class="nLi on">
+                    <h3><i class="fa fa fa-dashboard icon"></i>信息展示<span class="fa fa-angle-up arrow"></span>
+                    </h3>
+                    <ul class="sub">
+						<li v-if="authority.indexOf(1) != -1">
+							<a href="adminInfo.html"><i class="fa fa-table"></i>管理员信息</a>
+						</li>
+
+						<li v-if="authority.indexOf(3) != -1">
+							<a href="userInfo.html"><i class="fa fa-table"></i>用户信息</a>
+						</li>
+						<li v-if="authority.indexOf(5) != -1">
+							<a href="messageInfo.html"><i class="fa fa-table"></i>在线交流</a>
+						</li>
+						<li v-if="authority.indexOf(1000001) != -1">
+							<a href="advertiserInfo.html"><i class="fa fa-table"></i>公告信息</a>
+						</li>
+						<li v-if="authority.indexOf(1000009) != -1">
+							<a href="typeInfo.html"><i class="fa fa-table"></i>化妆品类别</a>
+						</li>
+						<li v-if="authority.indexOf(1000010) != -1">
+							<a href="goodsInfo.html"><i class="fa fa-table"></i>化妆品详情</a>
+						</li>
+						<li v-if="authority.indexOf(1000012) != -1">
+							<a href="orderInfo.html"><i class="fa fa-table"></i>订单信息</a>
+						</li>
+						<li v-if="authority.indexOf(1000013) != -1">
+							<a href="commentInfo.html"><i class="fa fa-table"></i>评价信息</a>
+						</li>
+
+                        <li>
+                            <a href="javascript:void(0)" @click="personalPage"><i class="fa fa-user"></i>个人信息</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nLi">
+                    <h3><i class="fa fa-unlock-alt"></i>修改密码<span class="fa fa-angle-up arrow"></span></h3>
+                    <ul class="sub">
+                        <li>
+                            <a href="updatePassword.html"><i class="fa fa-unlock-alt"></i>修改密码</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nLi">
+                    <h3><i class="fa fa-power-off"></i>退出登录<span class="fa fa-angle-up arrow"></span></h3>
+                    <ul class="sub">
+                        <li>
+                            <a href="javascript:void(0)" @click="logout"><i class="fa fa-power-off"></i>退出登录</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!-- 主体 -->
+    <div class="main">
+        <!-- 头部开始 -->
+        <div class="main-head" style="width: 100%; display: flex">
+            <div style="flex: 1; text-align: right">
+                <a href="/front/index.html"> <i class="fa fa-backward" style="margin-right: 5px"></i>返回前台首页</a>
+                <a href="javascript:void(0)" @click="personalPage">当前登录：<span style="color: yellow">{{user.name}}</span></a>
+                <a href="javascript:void(0)" @click="logout">退出登录</a>
+            </div>
+        </div>
+        <!-- 头部结束 -->
+
+        <!-- 主体开始 -->
+        <div style="padding: 0 20px">
+            <div>
+                <div class="table-title">购物车信息</div>
+            </div>
+
+            <!-- 表格主体-->
+            <div style="margin-top: 10px">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">购物车信息</div>
+                            <div class="panel-body">
+                                <div class="table-responsive">
+                                    <div class="nx-table-header">
+                                    </div>
+                                    <table class="table table-striped table-bordered table-hover" style="margin-top: 10px">
+                                        <thead>
+                                        <tr>
+
+                                            <th>商品名称</th>
+                                            <th>商品数量</th>
+                                            <th>创建时间</th>
+                                            <th>创建人</th>
+                                            <th>操作</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody v-for="obj in objs">
+                                        <tr>
+
+                                            <td>{{obj.goodsName}}</td>
+                                            <td>{{obj.count}}</td>
+                                            <td>{{obj.createTime}}</td>
+                                            <td>{{obj.userName}}</td>
+                                            <td>
+                                                <button class="btn btn-danger btn-xs" v-on:click="del(obj.id)">删除</button>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                    <nav aria-label="Page navigation example">
+                                        <ul class="pagination">
+                                            <li class="page-item" v-bind:class="{ disabled: preActive }">
+                                                <a class="page-link" href="javascript:void(0)"
+                                                   v-on:click="loadTable(pageInfo.pageNum - 1)">上一页</a>
+                                            </li>
+                                            <li class="page-item">
+                                                <a class="page-link" href="javascript:void(0)" v-if="pageInfo.pageNum > 1" v-on:click="loadTable(pageInfo.pageNum - 1)">{{pageInfo.pageNum - 1}}</a>
+                                            </li>
+                                            <li class="page-item disabled">
+                                                <a class="page-link" aria-disabled="true" href="javascript:void(0)">{{pageInfo.pageNum}}</a>
+                                            </li>
+                                            <li class="page-item">
+                                                <a class="page-link" href="javascript:void(0)" v-if="pageInfo.hasNextPage" v-on:click="loadTable(pageInfo.pageNum + 1)">{{pageInfo.pageNum + 1}}</a>
+                                            </li>
+                                            <li class="page-item" v-bind:class="{ disabled: nextActive }">
+                                                <a class="page-link" href="javascript:void(0)" v-on:click="loadTable(pageInfo.hasNextPage? (pageInfo.pageNum + 1) : pageInfo.pageNum)">下一页</a>
+                                            </li>
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 表格主体结束-->
+        </div>
+        <!-- 主体结束 -->
+    </div>
+</div>
+
+<script src="../js/jquery-1.10.2.js"></script>
+<script src="../js/bootstrap.min.js"></script>
+<script src="../js/nav.js"></script>
+<script src="../js/my.js"></script>
+<script src="../js/vue2.6.11/vue.min.js"></script>
+<script src="../js/vue2.6.11/axios.js"></script>
+<script src="../js/element/index.js"></script>
+
+<script>
+    function msg(type, msg) {
+        Vue.prototype.$message({
+            type: type, // success（成功）、warning（警告）, error(错误)
+            message: msg,
+            duration: 2000,
+            offset: 100,
+            center: true
+        })
+    }
+
+    new Vue({
+        el: '#wrapper',
+        data: {
+            authority: [],
+            user: {},
+            objs: [],
+            pageInfo: {},
+            preActive: true,
+            nextActive: true,
+            entity: {}
+        },
+        created: function () {
+            this.user = JSON.parse(localStorage.getItem('user'));
+            axios.get("/authority").then(res => {
+                if (res.data.code === '0') {
+                    this.authority = res.data.data;
+                } else {
+                    msg('error', res.data.msg);
+                }
+            });
+            this.loadTable(1);
+        },
+        methods: {
+
+            loadTable(pageNum) {
+                axios.get("/cartInfo/page?pageNum=" + pageNum).then(res => {
+                    if (res.data.code === '0') {
+                        this.objs = res.data.data.list;
+                        this.pageInfo = res.data.data;
+                        this.preActive = !(this.pageInfo.hasPreviousPage);
+                        this.nextActive = !(this.pageInfo.hasNextPage);
+                    } else {
+                        msg('error', res.data.msg);
+                    }
+                });
+            },
+            del(id) {
+                let _this = this;
+                this.$confirm('确认删除？', '系统提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    cancelButtonClass: 'btn-custom-cancel',
+                    type: 'warning'
+                }).then(function(){
+                    axios.delete("/cartInfo/" + id).then(res => {
+                        if (res.data.code === '0') {
+                            msg('success', '删除成功');
+                            _this.loadTable(1);
+                        } else {
+                            msg('error', res.data.msg);
+                        }
+                    });
+                }).catch(function() {
+                    console.log("取消成功！");
+                });
+            },
+            logout() {
+                logout();
+            }
+        }
+    })
+</script>
+</body>
+</html>

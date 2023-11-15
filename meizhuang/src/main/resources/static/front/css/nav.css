@@ -1,0 +1,23 @@
+.nav-item {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+a.nav-item-active {
+    color: red;
+}
+
+
+.nav-item:hover {
+    /*border-bottom: 4px solid #9098a7;*/
+    color: blue;
+    /*transition: all 0.2s;*/
+}
+
+.active {
+    color: red;
+}
+a.active {
+    color: blue;
+}

@@ -1,0 +1,16 @@
+/*公共样式--开始*/
+html, body, div, ul, li, h1, h2, h3, h4, h5, h6, p, dl, dt, dd, ol, form, input, textarea, th, td, select {margin: 0;padding: 0;}
+*{box-sizing: border-box;}
+html, body {min-height: 100%;}
+ul,ol {list-style: none;}
+body {
+    font-size: 14px;
+}
+a, a:visited, a:hover, a:link{
+    text-decoration: none;
+    cursor: pointer;
+}
+body {
+    /*background-image: linear-gradient(to right, #f5ac92,#cfa5c2);*/
+    background-color: #f9f6f1;
+}

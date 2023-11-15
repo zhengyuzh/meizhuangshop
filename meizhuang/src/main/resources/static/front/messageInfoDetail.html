@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="pragma" content="no-cache"/>
+    <meta http-equiv="content-type" content="no-cache, must-revalidate"/>
+    <meta http-equiv="expires" content="Wed, 26 Feb 1997 08:21:57 GMT"/>
+    <title>在线交流</title>
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/my.css">
+    <link rel="stylesheet" href="css/nav.css">
+    <link href="/end/css/quill.snow.css" rel="stylesheet">
+    <link href="css/font-awesome.css" rel="stylesheet">
+
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+        .ql-editor img {
+            width: 600px;
+        }
+    </style>
+</head>
+<body>
+<div id="wrapper" v-cloak>
+    <!-- 头部开始 -->
+    <div style="width: 100%; height: 30px; line-height: 30px; background-color: #518657">
+        <div class="container">
+            <div class="col-md-6" style="text-align: left">
+                <a href="/end/page/login.html" target="_blank" style="color: white; margin-right: 20px" >登录</a>
+                <a href="/end/page/register.html" target="_blank" style="color: white">注册</a>
+            </div>
+            <div class="col-md-6" style="color: yellow; text-align: right">
+                <span v-if="user.name">
+                    欢迎您，{{user.name}}
+                    <a style="color: white" href="javascript:void(0)" @click="logout">退出</a>
+                    <a v-if="isCollect" style="margin-left: 10px" href="collectInfo.html">收藏夹</a>
+                </span>
+            </div>
+        </div>
+        <hr>
+    </div>
+    <div class="container">
+        <div style="width: 100%; height: 80px;border-bottom: 1px solid #ccc">
+            <div class="col-md-3" style="height: 80px; display: flex; justify-content: left;align-items: center;
+                     font-size: 30px;">
+                <a style="color: red;" href="/front/index.html">MakeUp美妆网</a>
+            </div>
+            <div class="col-md-9">
+                <div class="row" style="height: 80px; line-height: 80px">
+                    <ul style="display: flex;">
+                        <li class="nav-item"><a href="index.html">首页</a></li>
+                        <li class="nav-item"><a href="advertiserInfo.html">公告信息</a></li>
+			<li class="nav-item"><a href="messageInfo.html" class="nav-item-active">在线交流</a></li>
+			<li class="nav-item"><a href="cartInfo.html">购物车信息</a></li>
+			<li class="nav-item"><a href="orderInfo.html">订单信息</a></li>
+			<li class="nav-item"><a href="commentInfo.html">评价信息</a></li>
+
+                        <li class="nav-item"><a href="javascript:void(0)" @click="personalPage">个人信息</a></li>
+                        <li class="nav-item" v-if="isShow"><a href="/end/page/index.html" target="_blank">进入后台系统</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 头部结束 -->
+    <div class="container" style="margin-top: 10px">
+        <div class="info">
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2">
+                    <div class="panel panel-default">
+                        <div class="panel-body bg-gray">
+                            <div v-if="isPraise" style="text-align: right; font-size: 18px">
+                                <i class="fa fa-thumbs-o-up praise" @click="hotClick()"><span style="margin-left: 3px; font-size: 12px">{{praiseCount}}</span></i>
+                            </div>
+							<div class="row p-10" style="margin-bottom: 10px">
+								<div class="col-md-2">留言名称：</div>
+								<div class="col-md-10">{{ obj.name }}</div>
+							</div>
+							<div class="row p-10" style="margin-bottom: 10px">
+								<div class="col-md-2">留言内容：</div>
+								<div class="col-md-10">{{ obj.content }}</div>
+							</div>
+							<div class="row p-10" style="margin-bottom: 10px">
+								<div class="col-md-2">留言时间：</div>
+								<div class="col-md-10">{{ obj.time }}</div>
+							</div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--richtext
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <div class="panel panel-default">
+                    <div class="ql-editor panel-body" id="view-notice-body">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        richText-->
+        <!-- /. 表单数据 -->
+
+        <div v-if="isThisCollect" class="row">
+            <div class="col-md-8 col-md-offset-2" style="text-align: right;">
+                <button class="btn-sm btn-primary f-r" @click="collect()">收藏</button>
+                <hr>
+            </div>
+        </div>
+
+        <div class="comment" v-if="isComment">
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2">
+                    <h2>评论</h2>
+                </div>
+            </div>
+
+
+            <div class="comment-item">
+                <!--                <div class="row mt-10">-->
+                <!--                    <div class="col-md-8 col-md-offset-2" style="font-size: 20px; font-weight: bold">admin</div>-->
+                <!--                </div>-->
+                <div class="row mt-10">
+                    <div class="col-md-8 col-md-offset-2" style="text-align: justify">
+                        <textarea style="resize:none; width: 100%" rows="3" v-model="comment.content"></textarea>
+                    </div>
+                </div>
+                <div class="row mt-10">
+                    <div class="col-md-8 col-md-offset-2" style="text-align: right;">
+                        <button class="btn btn-primary f-r" @click="add()">发送</button>
+                        <hr>
+                    </div>
+                </div>
+            </div>
+
+            <div class="comment-item">
+                <div v-for="item in comments" class="row mt-10">
+                    <div class="col-md-8 col-md-offset-2">
+                        <div class="col-md-1" style="text-align: right"><b>{{item.name}}</b></div>
+                        <div class="col-md-11">
+                            <div class="row">
+                                <div class="col-md-8" style="text-align: justify;">{{item.content}}</div>
+                                <div class="col-md-4" style="text-align: right">{{item.time}}</div>
+                                <div style="color: #888" v-for="child in item.children">
+                                    <div class="col-md-12" style="margin-top: 10px; ">{{child.name}}回复：</div>
+                                    <div class="col-md-8">{{child.content}}</div>
+                                    <div class="col-md-4" style="text-align: right">{{child.time}}</div>
+                                </div>
+
+                                <div class="col-md-6" style="margin-top: 10px">
+                                    <input type="text" class="form-control" style="width: 80%; display: inline-block" v-model="item.replayText">
+                                    <button class="btn btn-sm" @click="reply(item.id, item.replayText)">回复</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12"><hr  style="margin: 10px 0"/></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="js/jquery-1.10.2.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/vue2.6.11/axios.js"></script>
+<script src="js/vue2.6.11/vue.min.js"></script>
+<script src="/end/js/quill.js"></script>
+<script src="js/my.js"></script>
+
+<script>
+    new Vue({
+        el: '#wrapper',
+        data: {
+            imgWidth: '0px',
+            comments: [],
+            content: '',
+            obj: {},
+            isComment: false,
+            comment: {
+                content: '',
+                foreignId: 0
+            },
+            fileSrc: '',
+            user: {},
+            isShow: false,
+            praiseCount: 0,
+            isPraise: false,
+            isCollect: false,
+            isThisCollect: false
+        },
+        created() {
+            axios.get('/auth').then(res => {
+                if (res.data.code === '0') {
+                    this.user = res.data.data;
+                    if (this.user.level !== 3) {
+                        this.isShow = true;
+                    }
+                }
+            });
+
+            this.getPraiseCount();
+
+            let id = this.getQueryVariable('id');
+            this.comment.foreignId = id;
+            if (id !== 0) {
+                axios.get('/messageInfo/' + id).then(res => {
+                    if (res.data.code === '0') {
+                        let obj = res.data.data;
+                        this.obj = obj;
+                        if (obj.fileName) {
+                            if (/\.(png|jpg|gif|jpeg|webp)$/.test(obj.fileName)) {
+                                this.obj.fileType = 'image';
+                            } else if (/\.mp4$/.test(obj.fileName)) {
+                                this.obj.fileType = 'video';
+                            } else {
+                                this.obj.fileType = 'other';
+                            }
+                            this.fileSrc = '/files/download/' + obj.fileId;
+
+                            let img = new Image();
+                            img.src = this.fileSrc;
+                            let _this = this;
+                            img.onload = function(){
+                                if (img.width > 590) {
+                                    _this.imgWidth = "100%";
+                                } else {
+                                    _this.imgWidth = img.width + "px";
+                                }
+                            };
+                        }
+                        /*richText
+                        $('#view-notice-body').html(obj.content);
+                        richText*/
+                    } else {
+                        alert(res.data.msg)
+                    }
+                });
+                this.loadComments(id);
+            }
+        },
+        methods: {
+            add() {
+                if (this.comment.content === '') {
+                    return;
+                }
+                axios.post('/messageInfoComment', this.comment).then(res => {
+                    if (res.data.code === '0') {
+                        this.comment.content = '';
+                        this.loadComments(this.comment.foreignId);
+                    } else {
+                        alert(res.data.msg);
+                    }
+                })
+            },
+            loadComments(id) {
+                axios.get('/messageInfoComment/findByForeignId/' + id).then(res => {
+                    if (res.data.code === '0') {
+                        this.comments = res.data.data;
+                    } else {
+                        alert(res.data.msg)
+                    }
+                })
+            },
+            getQueryVariable(key) {
+                let query = window.location.search.substring(1);
+                let vars = query.split("&");
+                for (let i = 0; i < vars.length; i++) {
+                    let pair = vars[i].split("=");
+                    if (pair[0] === key) {
+                        return pair[1];
+                    }
+                }
+                return '';
+            },
+            getPraiseCount() {
+                let id = this.getQueryVariable('id');
+                axios.get('/messageInfoPraise/count/' + id).then(res => {
+                    if (res.data.code === '0') {
+                        this.praiseCount = res.data.data;
+                    } else {
+                        alert(res.data.msg);
+                    }
+                });
+            },
+            hotClick() {
+                let id = this.getQueryVariable('id');
+                let _this = this;
+                axios.post('/messageInfoPraise',
+                    {userId: _this.user.id, level: _this.user.level, foreignId: id})
+                    .then(res => {
+                        if (res.data.code === '0') {
+                            alert('点赞成功');
+                            _this.getPraiseCount();
+                        } else {
+                            alert(res.data.msg);
+                        }
+                    })
+            },
+            collect() {
+                axios.post("/collectInfo", this.obj).then(res => {
+                    if (res.data.code === "0") {
+                        alert("收藏成功")
+                    } else {
+                        alert(res.data.msg)
+                    }
+                })
+            },
+            reply(id, content) {
+                let user = this.user;
+                if (!user || !user.name) {
+                    alert('请先登录');
+                    this.loadComments(id);
+                    return;
+                }
+                if (!content) {
+                    alert('请输入内容');
+                    return;
+                }
+                let foreignId = this.getQueryVariable('id');
+                let data = {content: content, name: user.name, foreignId: foreignId, parentId: id};
+                axios.post('/messageInfoComment', data).then(res => {
+                    $('#message-text').val('');
+                    alert('回复成功');
+                    this.loadComments(foreignId);
+                })
+            },
+            logout() {
+                axios.get("/logout").then(res => {
+                    if(res.data.code === '0') {
+                        location.href = '/front/index.html';
+                    } else {
+                        msg('error', res.data.msg);
+                    }
+                })
+            }
+        }
+    })
+</script>
+</body>
+</html>

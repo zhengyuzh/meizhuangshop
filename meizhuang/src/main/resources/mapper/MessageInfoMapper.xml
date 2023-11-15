@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.dao.MessageInfoDao">
+
+    <select id="findByName" resultType="com.example.vo.MessageInfoVo">
+        select `message_info`.* from `message_info`
+
+        where 1 = 1
+        <if test="name != null and name != '' and name != 'all'">
+            and `message_info`.`name` like concat('%', #{name}, '%')
+        </if>
+        order by `message_info`.id
+    </select>
+
+    <select id="findByParentId" resultType="com.example.vo.MessageInfoVo">
+         select `message_info`.* from `message_info` where parentId = #{parentId}
+    </select>
+
+
+</mapper>

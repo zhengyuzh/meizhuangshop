@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="pragma" content="no-cache"/>
+    <meta http-equiv="content-type" content="no-cache, must-revalidate"/>
+    <meta http-equiv="expires" content="Wed, 26 Feb 1997 08:21:57 GMT"/>
+    <title>首页</title>
+    <link href="css/swiper-5.4.5/swiper.min.css" rel="stylesheet">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/my.css" rel="stylesheet">
+    <link href="css/nav.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/nav.css">
+
+</head>
+<body style="background-color: #f2dede">
+
+<div id="wrapper">
+    <!--weather
+    <div style="text-align: right;">
+        <iframe width="700" scrolling="no" height="60" frameborder="0" allowtransparency="true" src="http://i.tianqi.com/index.php?c=code&amp;id=12&amp;icon=1&amp;num=5"></iframe>
+    </div>
+    weather-->
+    <!-- 头部开始 -->
+    <div style="width: 100%; height: 30px; line-height: 30px; background-color: #518657">
+        <div class="container">
+            <div class="col-md-6" style="text-align: left">
+                <a href="/end/page/login.html" target="_blank" style="color: white; margin-right: 20px" >登录</a>
+                <a href="/end/page/register.html" target="_blank" style="color: white">注册</a>
+            </div>
+            <div class="col-md-6" style="color: yellow; text-align: right">
+                <span v-if="user.name">
+                    欢迎您，{{user.name}}
+                    <a style="color: white" href="javascript:void(0)" @click="logout">退出</a>
+                    <a v-if="isCollect" style="margin-left: 10px" href="collectInfo.html">收藏夹</a>
+                </span>
+            </div>
+        </div>
+        <hr>
+    </div>
+    <div class="container">
+        <div style="width: 100%; height: 80px;border-bottom: 1px solid #ccc">
+            <div class="col-md-3" style="height: 80px; display: flex; justify-content: left;align-items: center;
+                     font-size: 30px;">
+                <a style="color: red;" href="/front/index.html">MakeUp美妆网</a>
+            </div>
+            <div class="col-md-9">
+                <div class="row" style="height: 80px; line-height: 80px;">
+                    <ul style="display: flex;">
+                        <li class="nav-item"><a href="index.html" class="nav-item-active">首页</a></li>
+                        <li class="nav-item"><a href="advertiserInfo.html">公告信息</a></li>
+                        <li class="nav-item"><a href="messageInfo.html">在线交流</a></li>
+                        <li class="nav-item"><a href="cartInfo.html">购物车信息</a></li>
+                        <li class="nav-item"><a href="orderInfo.html">订单信息</a></li>
+                        <li class="nav-item"><a href="commentInfo.html">评价信息</a></li>
+
+                        <li class="nav-item"><a href="javascript:void(0)" @click="personalPage">个人信息</a></li>
+                        <li class="nav-item" v-if="isShow"><a href="/end/page/index.html" target="_blank">进入后台系统</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 头部结束 -->
+    <!-- 搜索开始 -->
+    <div class="container">
+        <div class="col-md-12" style="height: 80px; display: flex; align-items: center; border-bottom: 1px solid #ccc">
+            <input type="text" style="border: 1px solid black; height: 20px; width: 40%; padding: 15px 10px;
+                            font-size: 12px; border-radius: 5px" v-model="searchText" placeholder="搜索化妆品">
+            <button style="padding: 5px; background-color: black; color: white; border: none; border-radius: 5px; margin-left: 5px"
+                    @click="searchGoods(searchText)">搜索化妆品</button>
+            <span style="margin-left: 100px"><b>24小时客服热线：400-880-9988</b></span>
+        </div>
+    </div>
+    <!-- 搜索结束 -->
+    <!-- 主体开始 -->
+    <div style="width: 100%;">
+        <div class="container">
+            <!-- 主体开始 -->
+            <div class="swiper-container">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide"><img class="carousel-img" src="/front/img/carousel/7.jpg" alt=""></div>
+                    <div class="swiper-slide"><img class="carousel-img" src="/front/img/carousel/8.jpg" alt=""></div>
+                    <div class="swiper-slide"><img class="carousel-img" src="/front/img/carousel/10.jpg" alt=""></div>
+                </div>
+                <!-- 如果需要分页器 -->
+                <div class="swiper-pagination"></div>
+                <!-- 如果需要导航按钮 -->
+                <div class="swiper-button-prev"></div>
+                <div class="swiper-button-next"></div>
+            </div>
+
+            <div class="row" style="padding: 10px 0">
+                <div class="col-md-6" style="border-right: 1px solid #ccc">
+                    <!-- 热卖 -->
+                    <div>
+                        <div style="color: rebeccapurple; border-bottom: 1px solid #ccc; font-size: 20px; padding: 10px;"><b>热卖化妆品</b></div>
+                        <ul class="goods-box">
+                            <li v-for="item in hots" style="width: 25%; padding: 10px; display: inline-block">
+                                <a :href="'/front/goodsInfo.html?goodsId=' + item.id" target="_blank">
+                                    <img :src="item.src" style="width: 100%; height: 110px">
+                                    <p style="text-align: center; color: #666; font-size: 12px">{{item.name}}</p>
+                                    <div style="text-align: center; color: red; font-size: 12px">￥ {{item.price}}
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- 推荐 -->
+                    <div>
+                        <div style="color: darkorange; border-bottom: 1px solid #ccc; font-size: 20px; padding: 10px;"><b>系统推荐</b></div>
+                        <ul class="goods-box">
+                            <li v-for="item in recommends" style="width: 25%; padding: 10px; display: inline-block">
+                                <a :href="'/front/goodsInfo.html?goodsId=' + item.id" target="_blank">
+                                    <img :src="item.src" style="width: 100%; height: 110px">
+                                    <p style="text-align: center; color: #666; font-size: 12px">{{item.name}}</p>
+                                    <div style="text-align: center; color: red; font-size: 12px">￥ {{item.price}}
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 分类 -->
+                <div class="col-md-6">
+                    <div style="color: orangered; border-bottom: 1px solid #ccc; font-size: 20px; padding: 10px;"><b>化妆品分类</b></div>
+                    <div style="display: flex; justify-content: center; align-items: center; padding: 10px 0">
+                        <div style="flex: 1;text-align: center; cursor: pointer; border-radius: 5px;
+                         border-right: 1px solid white" v-for="(item,index) in typeObjs" :class="{'active': activeIndex === index}"
+                             @click="getIndexAndGoods(item.id, index)">{{item.name}}</div>
+                    </div>
+                    <ul class="goods-box">
+                        <li v-for="item in goodsList" style="width: 25%; padding: 10px; display: inline-block">
+                            <a :href="'/front/goodsInfo.html?goodsId=' + item.id" target="_blank">
+                                <img :src="item.src" style="width: 100%; height: 110px">
+                                <p style="text-align: center; color: #666; font-size: 12px">{{item.name}}</p>
+                                <div style="text-align: center; color: red; font-size: 12px">￥ {{item.price}}
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                </div>
+            <!-- 主体结束 -->
+        </div>
+    </div>
+    <!-- 主体结束 -->
+</div>
+
+<!--js库文件-->
+<script src="js/jquery-1.10.2.js"></script>
+<script src="js/swiper-5.4.5/swiper.min.js"></script>
+<script src="js/vue2.6.11/axios.js"></script>
+<script src="js/vue2.6.11/vue.min.js"></script>
+<script src="js/my.js"></script>
+
+<script>
+    $(function () {
+        var mySwiper = new Swiper('.swiper-container', {
+            // direction: 'vertical', // 垂直切换选项
+            autoplay: {
+                delay: 5000,
+                disableOnInteraction: false
+            },//可选选项，自动滑动
+            loop: true, // 循环模式选项
+            speed: 2000,
+
+            // 如果需要分页器
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true
+            },
+
+            // 如果需要前进后退按钮
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev'
+            }
+        });
+
+        // 鼠标移入停止自动滚动
+        var $swiperSide = $('.swiper-slide');
+        $swiperSide.mouseenter(function () {
+            mySwiper.autoplay.stop();
+        });
+        // 鼠标移出开始自动滚动
+        $swiperSide.mouseleave(function () {
+            mySwiper.autoplay.start();
+        });
+    });
+
+    new Vue({
+        el: '#wrapper',
+        data: {
+            isCollect: false,
+            activeIndex: 0,
+            typeObjs: [],
+            goodsList: [],
+            recommends: [],
+            hots: [],
+            user: {},
+            recommendPage: 1,
+            recommendPages: 1,
+            salesPage: 1,
+            salesPages: 1,
+            isShow: false,
+            searchText: null
+        },
+        created: function () {
+            axios.get('/auth').then(res => {
+                if (res.data.code === '0') {
+                    this.user = res.data.data;
+                    if (this.user.level !== 3) {
+                        this.isShow = true;
+                    }
+                }
+            });
+            this.loadRecommends(1);
+            this.loadHots(1);
+
+            axios.get("/typeInfo").then(res => {
+                console.error(res.data.data)
+                this.typeObjs = res.data.data;
+                // 默认展示第一个分类的数据
+                this.getIndexAndGoods(this.typeObjs[0].id, 0)
+            });
+        },
+        methods: {
+            loadRecommends(pageNum) {
+                axios.get("/goodsInfo/recommend?pageNum=" + pageNum).then(res => {
+                    if (res.data.code === '0') {
+                        this.recommendPages = Math.ceil(res.data.data.total / 10);  // 默认10个/页
+                        this.recommends = res.data.data.list;
+
+                        this.recommends.forEach(item => {
+                            let imgSrc = '/front/img/goods/default.png';
+                            if (item.fileIds) {
+                                let fileId = JSON.parse(item.fileIds)[0];
+                                imgSrc = '/files/download/' + fileId;
+                            }
+                            item.src = imgSrc;
+                        })
+                    } else {
+                        msg('error', res.data.msg);
+                    }
+                });
+            },
+            loadHots(pageNum) {
+                axios.get("/goodsInfo/sales?pageNum=" + pageNum).then(res => {
+                    if (res.data.code === '0') {
+                        this.salesPages = Math.ceil(res.data.data.total / 10);  // 默认10个/页
+                        console.error(res.data.data)
+
+
+                        this.hots = res.data.data.list;
+
+                        this.hots.forEach(item => {
+                            let imgSrc = '/front/img/goods/default.png';
+                            if (item.fileIds) {
+                                let fileId = JSON.parse(item.fileIds)[0];
+                                imgSrc = '/files/download/' + fileId;
+                            }
+                            item.src = imgSrc;
+                        })
+                    } else {
+                        msg('error', res.data.msg);
+                    }
+                });
+            },
+            getIndexAndGoods(typeId, index) {
+                this.activeIndex = index;
+                axios.get('/goodsInfo/findByType/' + typeId).then(res => {
+                    if (res.data.code === '0') {
+                        this.goodsList = res.data.data;
+                        if (this.goodsList.length > 5) {
+                            this.goodsList = this.goodsList.slice(0, 5);
+                        }
+                        this.goodsList.forEach(item => {
+                            let imgSrc = '/front/img/goods/default.png';
+                            if (item.fileIds) {
+                                let fileId = JSON.parse(item.fileIds)[0];
+                                imgSrc = '/files/download/' + fileId;
+                            }
+                            item.src = imgSrc;
+                        })
+                    } else {
+                        msg('error', res.data.msg);
+                    }
+                })
+            },
+            recommend(direct) {
+                if (direct === 'left') {
+                    this.recommendPage = this.recommendPage === 1 ? 1 : (this.recommendPage - 1);
+                } else {
+                    this.recommendPage = (this.recommendPage === this.recommendPages) ? this.recommendPages : (this.recommendPage + 1);
+                }
+                this.loadRecommends(this.recommendPage);
+            },
+            sales(direct) {
+                if (direct === 'left') {
+                    this.salesPage = this.salesPage === 1 ? 1 : (this.salesPage - 1);
+                } else {
+                    this.salesPage = (this.salesPage === this.salesPages) ? this.salesPages : (this.salesPage + 1);
+                }
+                this.loadHots(this.salesPage);
+            },
+            searchGoods(text) {   // 根据关键字查询化妆品
+                if (text) {
+                    // 调用接口查询
+                    axios.get('/goodsInfo/searchGoods', {
+                        params: {text: this.searchText}
+                    }).then(res => {
+                        if (res.data.code === '0') {
+                            this.goodsList = res.data.data;
+                            this.goodsList.forEach(item => {
+                                let imgSrc = '/front/img/goods/default.png';
+                                if (item.fileIds) {
+                                    let fileId = JSON.parse(item.fileIds)[0];
+                                    imgSrc = '/files/download/' + fileId;
+                                }
+                                item.src = imgSrc;
+                            });
+                            // 去除分类高亮
+                            this.activeIndex = null
+                        } else {
+                            msg('error', res.data.msg);
+                        }
+                    })
+                }
+            },
+            logout() {
+                axios.get("/logout").then(res => {
+                    if(res.data.code === '0') {
+                        location.href = '/front/index.html';
+                    } else {
+                        msg('error', res.data.msg);
+                    }
+                })
+            }
+
+        }
+    })
+</script>
+</body>
+</html>

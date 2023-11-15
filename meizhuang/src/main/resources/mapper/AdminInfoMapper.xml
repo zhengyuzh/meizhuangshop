@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.dao.AdminInfoDao">
+
+    <select id="checkRepeat" resultType="java.lang.Integer">
+        select count(id) from `admin_info` where ${column} = #{value}
+        <if test="id != null">
+            and id != #{id}
+        </if>
+    </select>
+
+    <select id="findByUsername" resultType="com.example.vo.AdminInfoVo">
+        select * from `admin_info` where `name` = #{username}
+    </select>
+
+    <select id="findByName" resultType="com.example.vo.AdminInfoVo">
+        select `admin_info`.* from `admin_info`
+
+        where 1 = 1
+        <if test="name != null and name != '' and name != 'all'">
+            and `admin_info`.`name` like concat('%', #{name}, '%')
+        </if>
+        order by `admin_info`.id
+    </select>
+    <select id="count" resultType="Integer">
+        select count(id) from `admin_info`
+    </select>
+</mapper>

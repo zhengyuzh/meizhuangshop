@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.dao.CommentInfoDao">
+    <select id="findByContent" resultType="com.example.entity.CommentInfo">
+        select a.*, c.name as goodsName from comment_info as a
+        left join goods_info as c on a.goodsId = c.id
+        where a.userId = #{userId} and a.level = #{level}
+        <if test="name != null and name != 'all' and name != ''">
+            and `content` like concat('%', #{name}, '%')
+        </if>
+    </select>
+
+    <select id="findByGoodsIdAndUserId" resultType="com.example.entity.CommentInfo">
+        select a.* from comment_info as a
+        where a.goodsId = #{goodsId} and a.userId = #{userId} and a.level = #{level}
+    </select>
+
+    <select id="findByGoodsId" resultType="com.example.entity.CommentInfo">
+       select * from comment_info
+       where goodsId = #{goodsId}
+    </select>
+</mapper>

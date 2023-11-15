@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.dao.GoodsInfoDao">
+    <select id="findByNameAndUserId" resultType="com.example.entity.GoodsInfo">
+        select * from goods_info
+        where 1 = 1
+        <if test="name != null and name != 'all' and name != ''">
+            and `name` like concat('%', #{name}, '%')
+        </if>
+        <if test="userId != null">
+            and `userId` = #{userId}
+        </if>
+        <if test="level != null">
+            and `level` = #{level}
+        </if>
+    </select>
+
+    <select id="getOrderGoods" resultType="com.example.entity.GoodsInfo">
+        select g.* from order_info o
+        left join order_goods_rel rel on o.id = rel.orderId
+        left join goods_info g on rel.goodsId = g.id
+        where o.userId = #{userId} and o.level = #{level} and o.status = '完成'
+    </select>
+</mapper>

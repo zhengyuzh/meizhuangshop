@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-bind="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="pragma" content="no-cache"/>
+    <meta http-equiv="content-type" content="no-cache, must-revalidate"/>
+    <meta http-equiv="expires" content="Wed, 26 Feb 1997 08:21:57 GMT"/>
+    <title>公告信息</title>
+    <link href="/front/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/front/css/my.css" rel="stylesheet">
+    <link href="/front/css/nav.css" rel="stylesheet">
+
+    <style>
+        #notice-box li {
+            margin-bottom: 10px;
+        }
+        #view-notice-body img {
+            width: 400px;
+        }
+        #view-notice-body iframe {
+            width: 400px;
+        }
+    </style>
+</head>
+<body style="background-color: #f2dede">
+<div id="wrapper">
+    <!-- 头部开始 -->
+    <div style="width: 100%; height: 30px; line-height: 30px; background-color: #518657">
+        <div class="container">
+            <div class="col-md-6" style="text-align: left">
+                <a href="/end/page/login.html" target="_blank" style="color: white; margin-right: 20px" >登录</a>
+                <a href="/end/page/register.html" target="_blank" style="color: white">注册</a>
+            </div>
+            <div class="col-md-6" style="color: yellow; text-align: right">
+                <span v-if="user.name">
+                    欢迎您，{{user.name}}
+                    <a style="color: white" href="javascript:void(0)" @click="logout">退出</a>
+                    <a v-if="isCollect" style="margin-left: 10px" href="collectInfo.html">收藏夹</a>
+                </span>
+            </div>
+        </div>
+        <hr>
+    </div>
+    <div class="container">
+        <div style="width: 100%; height: 80px;border-bottom: 1px solid #ccc">
+            <div class="col-md-3" style="height: 80px; display: flex; justify-content: left;align-items: center;
+                     font-size: 30px;">
+                <a style="color: red;" href="/front/index.html">MakeUp美妆网</a>
+            </div>
+            <div class="col-md-9">
+                <div class="row" style="height: 80px; line-height: 80px">
+                    <ul style="display: flex;">
+                        <li class="nav-item"><a href="index.html">首页</a></li>
+                        <li class="nav-item"><a href="advertiserInfo.html" class="nav-item-active">公告信息</a></li>
+                        <li class="nav-item"><a href="messageInfo.html">在线交流</a></li>
+                        <li class="nav-item"><a href="cartInfo.html">购物车信息</a></li>
+                        <li class="nav-item"><a href="orderInfo.html">订单信息</a></li>
+                        <li class="nav-item"><a href="commentInfo.html">评价信息</a></li>
+
+                        <li class="nav-item"><a href="javascript:void(0)" @click="personalPage">个人信息</a></li>
+                        <li class="nav-item" v-if="isShow"><a href="/end/page/index.html" target="_blank">进入后台系统</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 头部结束 -->
+    <div class="container" style="margin-top: 10px">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <b>{{currentAdvertiser.name}}</b>
+                            <span style="float: right; color: #888888">{{currentAdvertiser.time}}</span>
+                        </div>
+                        <div class="panel-body" id="view-notice-body" v-html="currentAdvertiser.content"></div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="panel panel-default" id="notice-box">
+                        <div class="panel-heading"><b>公告列表</b></div>
+                        <div class="panel-body">
+                            <ul id="notice-item-box">
+                                <li v-for="item in advertiserList">
+                                    <a :href="'advertiserInfo.html?id=' + item.id"  v-bind:class="{active: item.isActive}">{{item.name}}</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>
+
+<!--js库文件-->
+<script src="js/jquery-1.10.2.js"></script>
+<script src="js/vue2.6.11/vue.min.js"></script>
+<script src="js/vue2.6.11/axios.js"></script>
+<script src="js/my.js"></script>
+
+<script>
+    new Vue({
+        el: '#wrapper',
+        data: {
+            isCollect: false,
+            user: {},
+            currentId: 0,
+            isShow: false,
+            advertiserList: [],
+            currentAdvertiser: {}
+        },
+
+        created: function () {
+            axios.get('/auth').then(res => {
+                if (res.data.code === '0') {
+                    this.user = res.data.data;
+                    if (this.user.level !== 3) {
+                        this.isShow = true;
+                    }
+                }
+            });
+            this.currentId = this.getQueryVariable('id');
+            this.loadAdvertiserInfo();
+        },
+
+        methods: {
+            loadAdvertiserInfo() {
+                axios.get('/advertiserInfo/page/all?pageSize=10').then(res => {
+                    if (res.data.code === '0') {
+                        this.advertiserList = res.data.data.list;
+                        this.advertiserList.forEach(item => {
+                            if(parseInt(this.currentId) === item.id) {  // 当前选择的公告
+                                item.isActive = true;
+                                this.currentAdvertiser = item;
+                            } else {
+                                item.isActive = false;
+                            }
+                        })
+                    }
+                })
+            },
+            getQueryVariable(variable) {
+                let query = window.location.search.substring(1);
+                let vars = query.split("&");
+                for (let i = 0; i < vars.length; i++) {
+                    let pair = vars[i].split("=");
+                    if (pair[0] === variable) {
+                        return pair[1];
+                    }
+                }
+                return '1';
+            },
+            logout() {
+                axios.get("/logout").then(res => {
+                    if(res.data.code === '0') {
+                        location.href = '/front/index.html';
+                    } else {
+                        msg('error', res.data.msg);
+                    }
+                })
+            }
+        }
+    })
+</script>
+</body>
+</html>

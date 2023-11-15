@@ -1,0 +1,79 @@
+/*去除默认样式*/
+::-webkit-scrollbar {
+    width: 0;
+    height: 1px
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, .2);
+    background: rgba(0, 0, 0, .2)
+}
+
+* {
+    outline: none;
+    box-sizing: border-box;
+}
+
+/* 内外边距通常让各个浏览器样式的表现位置不同 */
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,blockquote,th,td,hr,button,article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section {
+    margin:0;
+    padding:0;
+}
+
+ul {
+    list-style: none;
+}
+
+a {
+    color: black;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: none;
+    color: black;
+}
+
+/*正常的未被访问过的链接*/
+a:link {
+    text-decoration: none;
+
+}
+/*已经访问过的链接*/
+a:visited {
+    text-decoration: none;
+    color: black;
+}
+/*鼠标划过(停留)的链接*/
+a:hover {
+    text-decoration: none;
+}
+/* 正在点击的链接，鼠标在元素上按下还没有松开*/
+a:active {
+    text-decoration: none;
+}
+/* 获得焦点的时候 鼠标松开时显示的颜色*/
+a:focus {
+    text-decoration: none;
+}
+
+/* 轮播图 */
+.swiper-container {
+    width: 100%;
+    height: 350px;
+}
+
+.carousel-img {
+    width: 100%;
+    height: 100%;
+}
+
+.bg-gray {
+    background-color: #EEEEEE;
+}
+
+.p-10 {
+    padding: 10px 0;
+}
+

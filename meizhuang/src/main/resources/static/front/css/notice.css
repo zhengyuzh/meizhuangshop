@@ -1,0 +1,26 @@
+body {
+    background-color: #EEEEEE;
+}
+.layui-card-header{
+    padding: 10px;
+}
+.notice-list-title {
+    height: 50px;
+    line-height: 50px;
+    border-bottom: 1px dotted #E9E9E9;
+    color: #333;
+    font-weight: bold;
+    font-size: 20px;
+}
+.notice-list-content {
+    padding-top: 10px;
+    color: #777;
+    cursor: pointer;
+}
+.notice-title-time {
+    position: absolute;
+    right: 10px;
+    bottom: 0;
+    font-size: 16px;
+    color: #BBBBBB;
+}

@@ -1,0 +1,278 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v-on="http://www.w3.org/1999/xhtml"
+      xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="pragma" content="no-cache" />
+    <meta http-equiv="content-type" content="no-cache, must-revalidate" />
+    <meta http-equiv="expires" content="Wed, 26 Feb 1997 08:21:57 GMT"/>
+    <title>个人信息</title>
+
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/nav.css">
+    <link rel="stylesheet" href="../css/font-awesome.css">
+    <link rel="stylesheet" href="../css/element/index.css">
+
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div id="wrapper" v-cloak>
+    <!--导航栏-->
+    <div class="menuW" style="float: left">
+        <div class="sideMenu">
+            <div class="head">MakeUp美妆网</div>
+            <ul>
+                <li class="nLi">
+                    <h3><i class="fa fa-dashboard"></i>首页<span class="fa fa-angle-up arrow"></span></h3>
+                    <ul class="sub">
+                        <li><a href="index.html"><i class="fa fa-dashboard"></i>首页</a></li>
+                    </ul>
+                </li>
+                <li class="nLi on">
+                    <h3><i class="fa fa fa-dashboard icon"></i>信息展示<span class="fa fa-angle-up arrow"></span>
+                    </h3>
+                    <ul class="sub">
+						<li v-if="authority.indexOf(1) != -1">
+							<a href="adminInfo.html"><i class="fa fa-table"></i>管理员信息</a>
+						</li>
+
+						<li v-if="authority.indexOf(3) != -1">
+							<a href="userInfo.html"><i class="fa fa-table"></i>用户信息</a>
+						</li>
+						<li v-if="authority.indexOf(5) != -1">
+							<a href="messageInfo.html"><i class="fa fa-table"></i>在线交流</a>
+						</li>
+						<li v-if="authority.indexOf(1000001) != -1">
+							<a href="advertiserInfo.html"><i class="fa fa-table"></i>公告信息</a>
+						</li>
+						<li v-if="authority.indexOf(1000009) != -1">
+							<a href="typeInfo.html"><i class="fa fa-table"></i>化妆品类别</a>
+						</li>
+						<li v-if="authority.indexOf(1000010) != -1">
+							<a href="goodsInfo.html"><i class="fa fa-table"></i>化妆品详情</a>
+						</li>
+						<li v-if="authority.indexOf(1000012) != -1">
+							<a href="orderInfo.html"><i class="fa fa-table"></i>订单信息</a>
+						</li>
+						<li v-if="authority.indexOf(1000013) != -1">
+							<a href="commentInfo.html"><i class="fa fa-table"></i>评价信息</a>
+						</li>
+
+                        <li>
+                            <a href="javascript:void(0)" @click="personalPage" class="active"><i class="fa fa-user"></i>个人信息</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nLi">
+                    <h3><i class="fa fa-unlock-alt"></i>修改密码<span class="fa fa-angle-up arrow"></span></h3>
+                    <ul class="sub">
+                        <li>
+                            <a href="updatePassword.html"><i class="fa fa-unlock-alt"></i>修改密码</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nLi">
+                    <h3><i class="fa fa-power-off"></i>退出登录<span class="fa fa-angle-up arrow"></span></h3>
+                    <ul class="sub">
+                        <li>
+                            <a href="javascript:void(0)" @click="logout"><i class="fa fa-power-off"></i>退出登录</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!-- 主体 -->
+    <div class="main">
+        <!-- 头部开始 -->
+        <div class="main-head" style="width: 100%; display: flex">
+            <div style="flex: 1; text-align: right">
+                <a href="/front/index.html"> <i class="fa fa-backward" style="margin-right: 5px"></i>返回前台首页</a>
+                <a href="javascript:void(0)" @click="personalPage">当前登录：<span style="color: yellow">{{user.name}}</span></a>
+                <a href="javascript:void(0)" @click="logout">退出登录</a>
+            </div>
+        </div>
+        <!-- 头部结束 -->
+
+        <!-- 主体开始 -->
+        <div style="padding: 0 20px">
+            <div>
+                <div class="table-title">个人信息</div>
+            </div>
+
+            <!-- 表格主体-->
+            <div style="margin-top: 10px">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">个人信息</div>
+                            <div class="panel-body">
+                                <form class="form-horizontal">
+                                    <input type="hidden" v-model="entity.id">
+                                    								<div class="form-group">
+									<label class="col-sm-3 control-label">姓名</label>
+									<div class="col-sm-7">
+										<input type="text" class="form-control" v-model="entity.name" placeholder="请输入姓名" id="name">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-3 control-label">昵称</label>
+									<div class="col-sm-7">
+										<input type="text" class="form-control" v-model="entity.nickName" placeholder="请输入昵称" id="nickName">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-3 control-label">性别</label>
+									<div class="col-sm-7">
+										<label class="radio-inline">
+											<input type="radio" value="男" v-model="entity.sex" id="sex">男
+										</label>
+										<label class="radio-inline">
+											<input type="radio" value="女" v-model="entity.sex" id="sex">女
+										</label>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-3 control-label">年龄</label>
+									<div class="col-sm-7">
+										<input type="text" class="form-control" v-model="entity.age" placeholder="请输入年龄" id="age">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-3 control-label">生日</label>
+									<div class="col-sm-7">
+										<div class="block">
+											<el-date-picker v-model="entity.birthday" id="birthday" type="datetime" clearable value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期时间"></el-date-picker>
+										</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-3 control-label">手机号</label>
+									<div class="col-sm-7">
+										<input type="text" class="form-control" v-model="entity.phone" placeholder="请输入手机号" id="phone">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-3 control-label">地址</label>
+									<div class="col-sm-7">
+										<input type="text" class="form-control" v-model="entity.address" placeholder="请输入地址" id="address">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-3 control-label">编号</label>
+									<div class="col-sm-7">
+										<input type="text" class="form-control" v-model="entity.code" placeholder="请输入编号" id="code">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-3 control-label">邮箱</label>
+									<div class="col-sm-7">
+										<input type="text" class="form-control" v-model="entity.email" placeholder="请输入邮箱" id="email">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-3 control-label">身份证</label>
+									<div class="col-sm-7">
+										<input type="text" class="form-control" v-model="entity.cardId" placeholder="请输入身份证" id="cardId">
+									</div>
+								</div>
+
+                                </form>
+                                <div style="text-align: center">
+                                    <button type="button" class="btn btn-primary" v-on:click="update()">保存</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 表格主体结束-->
+        </div>
+        <!-- 主体结束 -->
+    </div>
+</div>
+
+<script src="../js/jquery-1.10.2.js"></script>
+<script src="../js/bootstrap.min.js"></script>
+<script src="../js/nav.js"></script>
+<script src="../js/my.js"></script>
+<script src="../js/vue2.6.11/vue.min.js"></script>
+<script src="../js/vue2.6.11/axios.js"></script>
+<script src="../js/element/index.js"></script>
+
+<script>
+    function msg(type, msg) {
+        Vue.prototype.$message({
+            type: type, // success（成功）、warning（警告）, error(错误)
+            message: msg,
+            duration: 2000,
+            offset: 100,
+            center: true,
+        })
+    }
+
+    new Vue({
+        el: '#wrapper',
+        data: {
+
+            user: {},
+            authority: [],
+            entity: {
+                sex: '男'
+            }
+        },
+        created: function () {
+
+            this.loadData();
+
+            axios.get("/authority").then(res => {
+                if (res.data.code === '0') {
+                    this.authority = res.data.data;
+                } else {
+                    msg('error', res.data.msg);
+                }
+            });
+
+            this.user = JSON.parse(localStorage.getItem('user'));
+
+        },
+        methods: {
+            loadData() {
+                axios.get("/getAccountInfo").then(res => {
+                    if (res.data.code === '0') {
+                        this.entity = res.data.data;
+                    } else {
+                        msg('error', res.data.msg);
+                    }
+                });
+            },
+            update() {
+                if (checkValid(this.entity)) {
+                    axios.put(
+                        "/adminInfo", this.entity
+                    ).then(res => {
+                        if (res.data.code === '0') {
+                            msg('success', '更新成功');
+                            this.loadData();
+                        } else {
+                            msg('error', res.data.msg);
+                        }
+                    })
+                }
+            },
+            logout() {
+                logout();
+            }
+        }
+    })
+</script>
+</body>
+</html>
